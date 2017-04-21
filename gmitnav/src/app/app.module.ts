@@ -8,6 +8,8 @@ import { MapPage } from '../pages/map/map';
 import { NavigatePage } from '../pages/navigate/navigate';
 import { TabsPage } from '../pages/tabs/tabs';
 
+import { Geolocation } from '@ionic-native/geolocation';
+
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -34,6 +36,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   providers: [
     StatusBar,
     SplashScreen,
+    Geolocation,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
