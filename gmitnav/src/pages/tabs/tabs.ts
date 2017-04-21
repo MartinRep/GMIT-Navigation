@@ -9,9 +9,9 @@ import { NavigatePage } from '../navigate/navigate';
 })
 export class TabsPage {
 
-  tab1Root: any = AboutPage;
-  tab2Root: any = MapPage;
-  tab3Root: any = NavigatePage;
+  tab1Root = AboutPage;
+  tab2Root = MapPage;
+  tab3Root = NavigatePage;
 
   constructor() {
 
