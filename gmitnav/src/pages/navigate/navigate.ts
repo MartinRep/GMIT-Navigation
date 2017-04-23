@@ -6,6 +6,8 @@ import  * as neo4j from "neo4j-typescript";
   selector: 'navigate',
   templateUrl: 'navigate.html'
 })
+
+
 export class NavigatePage {
 
   constructor(public navCtrl: NavController) {
@@ -27,6 +29,20 @@ addMarker(){
 neo4j.connect(config)
   .then((response) => {
     console.log("Successfully connected.");
+    var ct = {
+      statement: "match (n) return n"
+           
+    }
+   var cyphTest: neo4j.INeo4jCypherRequest;
+   var resp : any;
+   cyphTest = { statements: [{
+     statement: "MATCH p=shortestPath((r1:Room {name:'208'})-[*]->(r2:Room {name:'200'})) RETURN p"
+   }]}
+   neo4j.cypher(cyphTest).then((resp) => {
+     console.log(resp);
+     console.log(resp.results.pop());
+
+   });
   }
 )
   .catch((reason) => {
@@ -35,4 +51,5 @@ neo4j.connect(config)
   });
 
 }
+
 }
