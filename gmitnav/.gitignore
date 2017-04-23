@@ -19,7 +19,13 @@ npm-debug.log*
 coverage/
 dist/
 
-!node_modules/neo4j-typescript/
+/*/
+!/src
+!/resources
+!/node_modules/
+/node_modules/*
+!node_modules/neo4j-typescript
+
 
 tmp/
 temp/
