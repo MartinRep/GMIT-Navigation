@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import  * as neo4j from "neo4j-typescript";
+import { AlertController, LoadingController  } from 'ionic-angular';
 
 var config: neo4j.INeo4jConfig = {
   authentication: {
@@ -24,7 +25,9 @@ locRoom : string = '';
 destRooms: string[] = [];
 destRoom: string = '';
 downRooms: string[] = [];
-  constructor(public navCtrl: NavController) {
+navigation: boolean = true;
+
+  constructor(public navCtrl: NavController, public loadingCtrl: LoadingController) {
     this.getRooms();
   }
 
@@ -63,12 +66,12 @@ getLocation(loc: any) {
     // Reset items back to all of the items
     
     // set val to the value of the searchbar
-    var locRoom = loc.target.value;
+    this.locRoom = loc.target.value;
     console.log(loc.target.value);
     // if the value is an empty string don't filter the items
-    if (locRoom && locRoom.trim() != '') {
+    if (this.locRoom && this.locRoom.trim() != '') {
       this.locRooms = this.locRooms.filter((lRoom) => {
-        return (lRoom.toLowerCase().indexOf(locRoom.toLowerCase()) > -1);
+        return (lRoom.toLowerCase().indexOf(this.locRoom.toLowerCase()) > -1);
       })
     }
   }
@@ -89,14 +92,17 @@ getDestination(des: any) {
 
   navigate()
   {
+  this.navigation = false;
+  this.presentLoading();
   neo4j.connect(config)
   .then((response) => 
     {
       console.log("Successfully connected.");
       var cyphTest: neo4j.INeo4jCypherRequest;
       cyphTest = { statements:[{
-          statement: "MATCH p=shortestPath((r1:Room {name:'208'})-[*]->(r2:Room {name:'200'})) RETURN p"
+          statement: "MATCH p=shortestPath((r1:Room {name:\""+this.locRoom+"\"})-[*0..10]->(r2:Room {name:\""+this.destRoom+"\"})) RETURN p"
         }]}
+        console.log(cyphTest);
       neo4j.cypher(cyphTest).then((resp) => 
         {
           console.log(resp);
@@ -109,6 +115,14 @@ getDestination(des: any) {
       console.error(reason);
     });
 
+  }
+
+  presentLoading() {
+    let loader = this.loadingCtrl.create({
+      content: "Calculation route...",
+      duration: 3000
+    });
+    loader.present();
   }
 
 }
