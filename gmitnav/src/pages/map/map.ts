@@ -18,7 +18,6 @@ export class MapPage {
  infoWindow: any;
  lat: number;
  lng : number;
- //GMITOverlay = new google.maps.OverlayView();
  overlay: any;
  div:any;
  bounds: any;
@@ -102,10 +101,10 @@ private imageOverlay()
   this.div.appendChild(img);
 
   var panes = this.overlay.getPanes();
-  panes.overlayLayer.appendChild(this.div);
+  panes.overlayLayer.appendChild(this.div); 
 }
 
-public draw()
+private draw()
 {
   var overlayProjection = this.overlay.getProjection();
   var sw = overlayProjection.fromLatLngToDivPixel(this.bounds.getSouthWest());
