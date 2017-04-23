@@ -7,7 +7,22 @@
 </ion-header>
 
 <ion-content>
-  <ion-buttons end >
-      <button  ion-button (click)="addMarker()"><ion-icon name="add"></ion-icon>Add Marker</button>
+  <h4>Select the room you are in:</h4>
+  <ion-searchbar (ionInput)="getLocation($event)"></ion-searchbar>
+  <ion-list #locationRoom>
+    <ion-item *ngFor="let room of locRooms">
+      {{ room }}
+    </ion-item>
+  </ion-list>
+  <h4>Select the destination Room:</h4>
+  <ion-searchbar (ionInput)="getDestination($event)"></ion-searchbar>
+  <ion-list #destinationRoom>
+    <ion-item *ngFor="let room of destRooms">
+      {{ room }}
+    </ion-item>
+  </ion-list>
+  
+  <ion-buttons color="secondary" end >
+      <button  ion-button (click)="navigate()"><ion-icon name="navigate"></ion-icon>Get route</button>
     </ion-buttons>  
 </ion-content>
