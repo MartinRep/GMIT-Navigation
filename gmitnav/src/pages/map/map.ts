@@ -18,11 +18,16 @@ export class MapPage {
  infoWindow: any;
  lat: number;
  lng : number;
+ //GMITOverlay = new google.maps.OverlayView();
+ overlay: any;
+ div:any;
+ bounds: any;
+ srcImage: any;
+ 
  
 
  constructor(public navCtrl: NavController,  public geolocation: Geolocation, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
    
-    //this.addMarker();
   }
 
  ngAfterViewInit(){
@@ -63,6 +68,7 @@ export class MapPage {
       }
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions); 
     this.createMapMarker();
+    //this.imageOverlay();
   }
  
  private createMapMarker() {
@@ -72,6 +78,43 @@ export class MapPage {
       position: new google.maps.LatLng(this.lat,this.lng)
     });
 
+}
+
+private imageOverlay()
+{
+ 
+  this.bounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(53.277622, -9.012568),
+    new google.maps.LatLng(53.279335, -9.009188));
+  this.srcImage = 'http://www.constructireland.ie/img/0210GMIT2.jpg';
+  this.overlay = new google.maps.OverlayView(this.bounds,this.srcImage,this.map);
+  this.overlay.setMap(this.map);
+  this.div = document.createElement('div');
+  this.div.style.borderStyle = 'none';
+  this.div.style.borderWidth = '0px';
+  this.div.style.position = 'absolute';
+
+  var img:any = document.createElement('img');
+  img.src = this.srcImage;
+  img.style.width = '100%';
+  img.style.height = '100%';
+  img.style.position = 'absolute';
+  this.div.appendChild(img);
+
+  var panes = this.overlay.getPanes();
+  panes.overlayLayer.appendChild(this.div);
+}
+
+public draw()
+{
+  var overlayProjection = this.overlay.getProjection();
+  var sw = overlayProjection.fromLatLngToDivPixel(this.bounds.getSouthWest());
+  var ne = overlayProjection.fromLatLngToDivPixel(this.bounds.getNorthEast());
+
+  this.div.style.left = sw.x + 'px';
+  this.div.style.top = ne.y + 'px';
+  this.div.style.width = (ne.x - sw.x) + 'px';
+  this.div.style.height = (sw.y - ne.y) + 'px';
 }
 
 showAlert() {
