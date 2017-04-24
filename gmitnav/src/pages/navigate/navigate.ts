@@ -174,6 +174,9 @@ showRoute()
           case "up":
             message = "right";
             break;
+          case "right":
+            message = "back";
+            break;
           default:
             break;
         }
@@ -190,6 +193,8 @@ showRoute()
           case "right":
             message = "straight";
             break;
+          case "left":
+            message = "back";
           default:
             break;
         }
@@ -206,6 +211,8 @@ showRoute()
           case "left":
             message = "right";
             break;
+          case "up":
+            message = "back";
           default:
             break;
         }
@@ -222,6 +229,8 @@ showRoute()
           case "left":
             message = "left";
             break;
+          case "down":
+            message = "back";
           default:
             break;
         }
@@ -232,14 +241,18 @@ showRoute()
       
     }
     
-    if(this.route[index+2].length < 3)    //check if it is a corridor
+    if(this.route[index+2] != this.destRoom)    //check if it is a corridor Rooms have min 3 digits, coridors 2
     {
-      this.navigationRoute.push("Go "+message);
-      if(index+5 < this.route.length)
+      this.navigationRoute.push("go "+message+".");
+      if(index+5 < this.route.length) //checking if junktion or reached destination, one before last is ignored to tell which side is destination room
       {
-        console.log(index);
-        console.log(this.route.length);
-        this.navigationRoute.push(" Then on the next junktion.");
+        if(this.route[index].indexOf("stairs") !== -1)  //If string has 'stairs' display stairs name instead of junction
+        {
+          this.navigationRoute.push(this.route[index]);
+        }else {
+          this.navigationRoute.push("On the next junction, then..");
+        }
+        
       }
     }else {
       this.navigationRoute.push("Your destination room will be on your "+message+".");
