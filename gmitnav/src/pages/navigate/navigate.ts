@@ -26,6 +26,7 @@ destRooms: string[] = [];
 destRoom: string = '';
 downRooms: string[] = [];
 navigation: boolean = true;
+route: any[] = [];
 
   constructor(public navCtrl: NavController, public loadingCtrl: LoadingController) {
     this.getRooms();
@@ -92,8 +93,8 @@ getDestination(des: any) {
 
   navigate()
   {
-  this.navigation = false;
   this.presentLoading();
+  this.navigation = false;
   neo4j.connect(config)
   .then((response) => 
     {
@@ -105,8 +106,22 @@ getDestination(des: any) {
         console.log(cyphTest);
       neo4j.cypher(cyphTest).then((resp) => 
         {
-          console.log(resp);
-          console.log(resp.results.pop());
+          resp.results.forEach(function(nResults) {
+            //console.log(nResults);
+            nResults.data.forEach(function(nData) {
+              //console.log(nData);
+            nData.row.forEach(function(nRow) {
+                //console.log(nRow);
+                nRow.forEach(function(resObjects) {
+                  /*
+                  Process data nodes and connections
+                   */
+                }, this);
+              }, this);
+            }, this);
+          }, this);
+          
+         // console.log(this.route);
         }
       );
     })
