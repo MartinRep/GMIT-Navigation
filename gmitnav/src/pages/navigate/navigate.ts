@@ -158,7 +158,8 @@ showRoute()
 {
   let direction: string;
   let message: string;
-  this.navigationRoute.push("Exit the room "+this.locRoom+" and go to the corridor, then..");
+  direction = "Exit the room "+this.locRoom+" then ";
+  //this.navigationRoute.push("Exit the room "+this.locRoom+" then ");
   for (var index = 2; index < this.route.length-1; index=index+2) {
     
     switch (this.route[index-1]) {
@@ -243,14 +244,18 @@ showRoute()
     
     if(this.route[index+2] != this.destRoom)    //check if it is a corridor Rooms have min 3 digits, coridors 2
     {
-      this.navigationRoute.push("go "+message+".");
+      direction = direction.concat("go "+message+".");
+      this.navigationRoute.push(direction);
+      //this.navigationRoute.push("go "+message+".");
       if(index+5 < this.route.length) //checking if junktion or reached destination, one before last is ignored to tell which side is destination room
       {
         if(this.route[index].indexOf("stairs") !== -1)  //If string has 'stairs' display stairs name instead of junction
         {
-          this.navigationRoute.push(this.route[index]);
+          direction = "Then ";
+          this.navigationRoute.push("Go "+this.route[index]);
         }else {
-          this.navigationRoute.push("On the next junction, then..");
+            direction = "On the next junction ";
+          //this.navigationRoute.push("On the next junction, then..");
         }
         
       }
@@ -258,8 +263,8 @@ showRoute()
       this.navigationRoute.push("Your destination room will be on your "+message+".");
     }
   }
-  console.log(this.navigationRoute);
-  this.navigationRoute = this.navigationRoute.slice(0);
+  //console.log(this.navigationRoute);
+  //this.navigationRoute = this.navigationRoute.slice(0);
 }
 
 

@@ -194,8 +194,8 @@ CREATE (c21)-[:Access{connection:['right']}]->(c17)
 CREATE (c17)-[:Access{connection:['up']}]->(c18)
 CREATE (c18)-[:Access{connection:['down']}]->(c17)
 
-CREATE (s16d:Stairs{name:"down stairs"})
-CREATE (s16u:Stairs{name:"up stairs"})
+CREATE (s16d:Stairs{name:"down the stairs"})
+CREATE (s16u:Stairs{name:"up the stairs"})
 CREATE (c15:Cooridor{name:"15"})
 
 CREATE (c17)-[:Access{connection:['down']}]->(s16d)
