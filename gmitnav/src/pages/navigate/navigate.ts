@@ -27,6 +27,7 @@ destRoom: string = '';
 downRooms: string[] = [];
 navigation: boolean = true;
 route: string[] = [];
+navigationRoute: string[] = [];
 
   constructor(public navCtrl: NavController, public loadingCtrl: LoadingController, public alertCtrl: AlertController) {
     this.getRooms();
@@ -57,6 +58,8 @@ getRooms()
         }
       );
   }).catch((reason) =>{
+    this.showAlert("Connection Error","Trouble with internet connection.");
+    this.navCtrl.pop();
     console.error(reason);
   });
 
@@ -67,7 +70,6 @@ getLocation(loc: any) {
     
     // set val to the value of the searchbar
     this.locRoom = loc.target.value;
-    console.log(loc.target.value);
     // if the value is an empty string don't filter the items
     if (this.locRoom && this.locRoom.trim() != '') {
       this.locRooms = this.locRooms.filter((lRoom) => {
@@ -87,13 +89,14 @@ getDestination(des: any) {
         return (dRoom.toLowerCase().indexOf(this.destRoom.toLowerCase()) > -1);
       })
     }
+   
   }
 
 
   navigate()
   {
   //Check if rooms selected are existent and not the same rooms
-  if(this.destRoom == this.locRoom || this.destRoom != this.destRooms.pop() || this.locRoom != this.locRooms.pop())
+  if(this.destRoom == this.locRoom || this.destRooms.indexOf(this.destRoom) == -1 || this.locRooms.indexOf(this.locRoom) == -1 )
   {
       this.showAlert('Houston we have problem.','There seems to be Room number MishMash.');
       this.navCtrl.push(NavigatePage);
@@ -140,18 +143,94 @@ getRoute()
           }, this);
           
          console.log(this.route);
+          this.showRoute();
         }
       );
     })
     .catch((reason) => {
       this.showAlert("Connection Error","Trouble with internet connection.");
+      this.navCtrl.pop();
       console.error(reason);
     });
-
+    this.showRoute();
   }
 
+showRoute()
+{
+  let direction: string;
+  let message: string;
 
-  presentLoading() {
+  this.navigationRoute.push("Exit the room "+this.locRoom+" and go to the corridor, then..");
+  for (var index = 2; index < this.route.length-1; index=index+2) {
+    
+    switch (this.route[index-1]) {
+      case "left":
+        switch (this.route[index+1]) 
+        {
+          case "down":
+            message = "left";
+            break;
+          case "left":
+            message = "straight";
+            break;
+          case "up":
+            message = "right";
+            break;
+          default:
+            break;
+        }
+        break;
+      case "right":
+        switch (this.route[index+1]) 
+        {
+          case "down":
+            message = "right";
+            break;
+          case "up":
+            message = "left";
+            break;
+          case "right":
+            message = "straight";
+            break;
+          default:
+            break;
+        }
+        break;
+      case "down":
+        switch (this.route[index+1]) 
+        {
+          case "down":
+            message = "straight";
+            break;
+          case "right":
+            message = "left";
+            break;
+          case "left":
+            message = "right";
+            break;
+          default:
+            break;
+        }
+        break;
+      default:
+        message = this.route[index+1];
+        break;
+      
+    }
+    
+    if(this.route[index+2].length < 3)    //check if it is a corridor
+    {
+      this.navigationRoute.push("Go "+message);
+      this.navigationRoute.push(" Then on the next junktion.");
+    }else {
+      this.navigationRoute.push("And your destination room "+this.destRoom+" will be on your "+message+".");
+    }
+  }
+  console.log(this.navigationRoute);
+}
+
+
+presentLoading() {
     let loader = this.loadingCtrl.create({
       content: "Calculation route...",
       duration: 2000
@@ -170,4 +249,3 @@ showAlert(title:string, message: string) {
   }
 
 }
-

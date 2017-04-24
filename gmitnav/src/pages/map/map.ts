@@ -79,13 +79,14 @@ export class MapPage {
 
 }
 
+/*      Google maps image overlay **IN PROGRESS**
 private imageOverlay()
 {
  
   this.bounds = new google.maps.LatLngBounds(
     new google.maps.LatLng(53.277622, -9.012568),
     new google.maps.LatLng(53.279335, -9.009188));
-  this.srcImage = 'http://www.constructireland.ie/img/0210GMIT2.jpg';
+  this.srcImage = '';
   this.overlay = new google.maps.OverlayView(this.bounds,this.srcImage,this.map);
   this.overlay.setMap(this.map);
   this.div = document.createElement('div');
@@ -115,6 +116,7 @@ private draw()
   this.div.style.width = (ne.x - sw.x) + 'px';
   this.div.style.height = (sw.y - ne.y) + 'px';
 }
+*/
 
 showAlert() {
     let alert = this.alertCtrl.create({
