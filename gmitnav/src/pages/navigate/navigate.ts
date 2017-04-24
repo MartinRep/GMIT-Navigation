@@ -26,9 +26,9 @@ destRooms: string[] = [];
 destRoom: string = '';
 downRooms: string[] = [];
 navigation: boolean = true;
-route: any[] = [];
+route: string[] = [];
 
-  constructor(public navCtrl: NavController, public loadingCtrl: LoadingController) {
+  constructor(public navCtrl: NavController, public loadingCtrl: LoadingController, public alertCtrl: AlertController) {
     this.getRooms();
   }
 
@@ -92,6 +92,18 @@ getDestination(des: any) {
 
   navigate()
   {
+  //Check if rooms selected are existent and not the same rooms
+  if(this.destRoom == this.locRoom || this.destRoom != this.destRooms.pop() || this.locRoom != this.locRooms.pop())
+  {
+      this.showAlert('Houston we have problem.','There seems to be Room number MishMash.');
+      this.navCtrl.push(NavigatePage);
+  }else {
+    this.getRoute();
+  }
+}
+
+getRoute()
+{
   this.presentLoading();
   this.navigation = false;
   neo4j.connect(config)
@@ -115,28 +127,47 @@ getDestination(des: any) {
                   /*
                   Process data nodes and connections
                    */
+                  console.log(resObjects);
+                  if(resObjects.name != null)   // if the data is a Nodes with label 'name' add name of the room or corridor to the route array.
+                  {
+                    this.route.push(resObjects.name);
+                  }else{                        // or else the data is relationship (connection)
+                    this.route.push(resObjects.connection[0]);
+                  }
                 }, this);
               }, this);
             }, this);
           }, this);
           
-         // console.log(this.route);
+         console.log(this.route);
         }
       );
     })
     .catch((reason) => {
-      console.log("error");
+      this.showAlert("Connection Error","Trouble with internet connection.");
       console.error(reason);
     });
 
   }
 
+
   presentLoading() {
     let loader = this.loadingCtrl.create({
       content: "Calculation route...",
-      duration: 3000
+      duration: 2000
     });
     loader.present();
   }
 
+showAlert(title:string, message: string) {
+    let alert = this.alertCtrl.create({
+      title: title,
+      subTitle: message,
+      buttons: ['OK']
+
+    });
+    alert.present();
+  }
+
 }
+
