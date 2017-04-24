@@ -25,11 +25,14 @@
   <ion-buttons color="secondary" end *ngIf="navigation">
       <button  ion-button (click)="navigate()"><ion-icon name="navigate"></ion-icon>Get route</button>
     </ion-buttons> 
-   <!--
-   <ion-list *ngIf="navigation==false">
-     <ion-item *nfFor="let navPoint of navigationRoute">
+   
+   <div  *ngIf="navigation == false">
+    <ion-list>
+     <ion-item *ngFor="let navPoint of navigationRoute">
         {{navPoint}}
      </ion-item>
 
-    </ion-list>  -->
+    </ion-list>   
+   </div>
+   
 </ion-content>

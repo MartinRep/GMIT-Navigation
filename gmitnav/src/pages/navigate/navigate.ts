@@ -152,14 +152,12 @@ getRoute()
       this.navCtrl.pop();
       console.error(reason);
     });
-    this.showRoute();
   }
 
 showRoute()
 {
   let direction: string;
   let message: string;
-
   this.navigationRoute.push("Exit the room "+this.locRoom+" and go to the corridor, then..");
   for (var index = 2; index < this.route.length-1; index=index+2) {
     
@@ -244,10 +242,11 @@ showRoute()
         this.navigationRoute.push(" Then on the next junktion.");
       }
     }else {
-      this.navigationRoute.push("And your destination room "+this.destRoom+" will be on your "+message+".");
+      this.navigationRoute.push("Your destination room will be on your "+message+".");
     }
   }
   console.log(this.navigationRoute);
+  this.navigationRoute = this.navigationRoute.slice(0);
 }
 
 
