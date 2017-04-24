@@ -44,10 +44,9 @@ getRooms()
       neo4j.cypher(cyphTest).then((resp) => 
         {
           //console.log(resp);
-          //console.log(resp.results.pop());
           resp.results.forEach(function(element) {
             element.data.forEach(function(room) {
-              console.log(room.row[0]);
+              //console.log(room.row[0]);
               this.locRooms.push(room.row[0]);
               this.destRooms.push(room.row[0]);
             //console.log(room.row[0]);
@@ -103,7 +102,7 @@ getDestination(des: any) {
       cyphTest = { statements:[{
           statement: "MATCH p=shortestPath((r1:Room {name:\""+this.locRoom+"\"})-[*0..10]->(r2:Room {name:\""+this.destRoom+"\"})) RETURN p"
         }]}
-        console.log(cyphTest);
+        //console.log(cyphTest);
       neo4j.cypher(cyphTest).then((resp) => 
         {
           resp.results.forEach(function(nResults) {
