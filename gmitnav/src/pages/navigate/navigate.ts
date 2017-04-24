@@ -212,6 +212,22 @@ showRoute()
             break;
         }
         break;
+        case "up":
+        switch (this.route[index+1]) 
+        {
+          case "up":
+            message = "straight";
+            break;
+          case "right":
+            message = "right";
+            break;
+          case "left":
+            message = "left";
+            break;
+          default:
+            break;
+        }
+        break;
       default:
         message = this.route[index+1];
         break;
@@ -221,7 +237,12 @@ showRoute()
     if(this.route[index+2].length < 3)    //check if it is a corridor
     {
       this.navigationRoute.push("Go "+message);
-      this.navigationRoute.push(" Then on the next junktion.");
+      if(index+5 < this.route.length)
+      {
+        console.log(index);
+        console.log(this.route.length);
+        this.navigationRoute.push(" Then on the next junktion.");
+      }
     }else {
       this.navigationRoute.push("And your destination room "+this.destRoom+" will be on your "+message+".");
     }
