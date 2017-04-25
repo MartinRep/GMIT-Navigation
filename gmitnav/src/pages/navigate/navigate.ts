@@ -3,6 +3,7 @@ import { NavController } from 'ionic-angular';
 import  * as neo4j from "neo4j-typescript";
 import { AlertController, LoadingController  } from 'ionic-angular';
 
+// setting up NEO4j connection settings through specified interface
 var config: neo4j.INeo4jConfig = {
   authentication: {
     username: "neo4j",
@@ -35,26 +36,24 @@ navigationRoute: string[] = [];
 
 getRooms()
 {
-  
+  //Connects to Neo4j DB and get current list of all rooms in DB
   neo4j.connect(config).then((response) =>
   {
     var cyphTest: neo4j.INeo4jCypherRequest;
+      //Defining cypher statement to retreive rooms list
       cyphTest = { statements:[{
           statement: "MATCH (r:Room) RETURN r.name"
         }]}
       neo4j.cypher(cyphTest).then((resp) => 
         {
-          //console.log(resp);
+          //Processing DB results
           resp.results.forEach(function(element) {
             element.data.forEach(function(room) {
-              //console.log(room.row[0]);
+              //Adding rooms numbers to input searchbar lists
               this.locRooms.push(room.row[0]);
               this.destRooms.push(room.row[0]);
-            //console.log(room.row[0]);
             }, this);
-            //console.log(element.data[0].row[0]);
           }, this);
-          //console.log(this.rooms);
         }
       );
   }).catch((reason) =>{
@@ -66,8 +65,9 @@ getRooms()
 }
 
 getLocation(loc: any) {
-    // Reset items back to all of the items
-    
+     /* 
+    Reset items back to all of the items!!
+      */
     // set val to the value of the searchbar
     this.locRoom = loc.target.value;
     // if the value is an empty string don't filter the items
@@ -79,8 +79,9 @@ getLocation(loc: any) {
   }
 
 getDestination(des: any) {
-    // Reset items back to all of the items
-   
+    /* 
+    Reset items back to all of the items!!
+      */
     // set val to the value of the searchbar
     this.destRoom = des.target.value;
     // if the value is an empty string don't filter the items
@@ -93,12 +94,12 @@ getDestination(des: any) {
   }
 
 
-  navigate()
-  {
-  //Check if rooms selected are existent and not the same rooms
+navigate()
+{
+  //Check if rooms selected are existent and location and destination room are not the same
   if(this.destRoom == this.locRoom || this.destRooms.indexOf(this.destRoom) == -1 || this.locRooms.indexOf(this.locRoom) == -1 )
   {
-      this.showAlert('Houston we have problem.','There seems to be Room number MishMash.');
+      this.showAlert('Houston we have a problem.','There seems to be Room number MishMash.');
       this.navCtrl.push(NavigatePage);
   }else {
     this.getRoute();
@@ -107,76 +108,71 @@ getDestination(des: any) {
 
 getRoute()
 {
+  var cyphTest: neo4j.INeo4jCypherRequest;
   this.presentLoading();
   this.navigation = false;
+  //Connects to Neo4j REST API with predefinned config settings
   neo4j.connect(config)
   .then((response) => 
     {
       console.log("Successfully connected.");
-      var cyphTest: neo4j.INeo4jCypherRequest;
       cyphTest = { statements:[{
           statement: "MATCH p=shortestPath((r1:Room {name:\""+this.locRoom+"\"})-[*0..10]->(r2:Room {name:\""+this.destRoom+"\"})) RETURN p"
         }]}
-        //console.log(cyphTest);
+        //Calles to the Neo4j DB with predefined cypher statement and process the responded result nested object arrays
       neo4j.cypher(cyphTest).then((resp) => 
         {
           resp.results.forEach(function(nResults) {
-            //console.log(nResults);
             nResults.data.forEach(function(nData) {
-              //console.log(nData);
             nData.row.forEach(function(nRow) {
-                //console.log(nRow);
                 nRow.forEach(function(resObjects) {
-                  /*
-                  Process data nodes and connections
-                   */
-                  console.log(resObjects);
-                  if(resObjects.name != null)   // if the data is a Nodes with label 'name' add name of the room or corridor to the route array.
+                  if(resObjects.name != null)   // if the data is a Nodes with add the name to the route array.
                   {
                     this.route.push(resObjects.name);
-                  }else{                        // or else the data is relationship (connection)
+                  }else{                        // or else if the data is relationship (connection)
                     this.route.push(resObjects.connection[0]);
                   }
                 }, this);
               }, this);
             }, this);
           }, this);
-          
-         console.log(this.route);
-          this.showRoute();
+          this.showRoute();   // Now calls funtion to process DB data to a readable format
         }
       );
     })
-    .catch((reason) => {
+    .catch((reason) => { 
       this.showAlert("Connection Error","Trouble with internet connection.");
-      this.navCtrl.pop();
+      this.navCtrl.pop();     //Returns to previous tab from the tab stack
       console.error(reason);
     });
   }
 
 showRoute()
 {
+  let message: string;    
   let direction: string;
-  let message: string;
-  direction = "Exit the room "+this.locRoom+" then ";
-  //this.navigationRoute.push("Exit the room "+this.locRoom+" then ");
+  message = "Exit the room "+this.locRoom+" then ";   //First 2 values are used as point and orientation of origin.
   for (var index = 2; index < this.route.length-1; index=index+2) {
-    
+    /*
+    Making directions directions orientational.
+    Translating DB data to correct directions accorting to which directions
+    they originated.
+    */
     switch (this.route[index-1]) {
       case "left":
         switch (this.route[index+1]) 
         {
           case "down":
-            message = "left";
+            direction = "left";
             break;
           case "left":
-            message = "straight";
+            direction = "straight";
             break;
           case "up":
-            message = "right";
+            direction = "right";
             break;
           case "right":
-            message = "back";
+            direction = "back";
             break;
           default:
             break;
@@ -186,16 +182,16 @@ showRoute()
         switch (this.route[index+1]) 
         {
           case "down":
-            message = "right";
+            direction = "right";
             break;
           case "up":
-            message = "left";
+            direction = "left";
             break;
           case "right":
-            message = "straight";
+            direction = "straight";
             break;
           case "left":
-            message = "back";
+            direction = "back";
           default:
             break;
         }
@@ -204,16 +200,16 @@ showRoute()
         switch (this.route[index+1]) 
         {
           case "down":
-            message = "straight";
+            direction = "straight";
             break;
           case "right":
-            message = "left";
+            direction = "left";
             break;
           case "left":
-            message = "right";
+            direction = "right";
             break;
           case "up":
-            message = "back";
+            direction = "back";
           default:
             break;
         }
@@ -222,52 +218,44 @@ showRoute()
         switch (this.route[index+1]) 
         {
           case "up":
-            message = "straight";
+            direction = "straight";
             break;
           case "right":
-            message = "right";
+            direction = "right";
             break;
           case "left":
-            message = "left";
+            direction = "left";
             break;
           case "down":
-            message = "back";
+            direction = "back";
           default:
             break;
         }
         break;
       default:
-        message = this.route[index+1];
         break;
-      
     }
     
     if(this.route[index+2] != this.destRoom)    //check if it is a corridor Rooms have min 3 digits, coridors 2
     {
-      direction = direction.concat("go "+message+".");
-      this.navigationRoute.push(direction);
-      //this.navigationRoute.push("go "+message+".");
-      if(index+5 < this.route.length) //checking if junktion or reached destination, one before last is ignored to tell which side is destination room
+      message = message.concat("go "+direction);    //Appending of direction to message
+      this.navigationRoute.push(message);             //Adding message to direction string array.  navigationRoute array is linked to ionlist in html 
+      if(index+5 < this.route.length)         //checking if junktion or reached destination, the one check before last is ignored. this allowes to display end message on which side of corridor is destination room located
       {
         if(this.route[index].indexOf("stairs") !== -1)  //If string has 'stairs' display stairs name instead of junction
         {
-          direction = "Then ";
-          this.navigationRoute.push("Go "+this.route[index]);
+          message = "Then ";
+          this.navigationRoute.push(this.route[index]);
         }else {
-            direction = "On the next junction ";
-          //this.navigationRoute.push("On the next junction, then..");
+            message = "On the next junction ";   
         }
-        
       }
     }else {
-      this.navigationRoute.push("Your destination room will be on your "+message+".");
+      this.navigationRoute.push("The room "+this.destRoom+" will be on your "+direction+".");
     }
   }
-  //console.log(this.navigationRoute);
-  //this.navigationRoute = this.navigationRoute.slice(0);
 }
-
-
+//Funcrion to display loading animation in case data beeing fetched from server are delayed. 
 presentLoading() {
     let loader = this.loadingCtrl.create({
       content: "Calculation route...",
@@ -275,15 +263,13 @@ presentLoading() {
     });
     loader.present();
   }
-
+// Function to display custom pop up message Errors an such
 showAlert(title:string, message: string) {
     let alert = this.alertCtrl.create({
       title: title,
       subTitle: message,
       buttons: ['OK']
-
     });
     alert.present();
   }
-
 }

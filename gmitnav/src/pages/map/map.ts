@@ -3,8 +3,6 @@ import { NavController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { AlertController, LoadingController  } from 'ionic-angular';
 
-
-
 declare var google;
 
 @Component({
@@ -13,7 +11,7 @@ declare var google;
 })
 export class MapPage {
 
- @ViewChild('map') mapElement: ElementRef;
+ @ViewChild('map') mapElement: ElementRef;    //Binding html div element with variable map
  map: any;
  infoWindow: any;
  lat: number;
@@ -22,18 +20,17 @@ export class MapPage {
  div:any;
  bounds: any;
  srcImage: any;
- 
- 
-
+  
  constructor(public navCtrl: NavController,  public geolocation: Geolocation, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
-   
   }
 
+//function is called when all the elements in html are initialized to prevent undefined div errors.
  ngAfterViewInit(){
    this.presentLoading();
    this.getGeoLocation();
  }
  
+ //displays loading animation when fetching data from net
  presentLoading() {
     let loader = this.loadingCtrl.create({
       content: "Please wait...",
@@ -42,7 +39,7 @@ export class MapPage {
     loader.present();
   }
  
- 
+ //Getting device current possition
  getGeoLocation(){
    this.geolocation.getCurrentPosition().then((position) => {
         this.lat = position.coords.latitude;
@@ -57,7 +54,7 @@ export class MapPage {
  
  initializeMap() {
     var minZoomLevel = 17;
-    
+      //setting up initial location zoomlevel and type of map
       let mapOptions = 
       {
         zoom: minZoomLevel,
@@ -65,7 +62,9 @@ export class MapPage {
         center: new google.maps.LatLng(53.278565, -9.010583),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
       }
+    //Initializing the map
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions); 
+    // callin finction to mark users current location on map
     this.createMapMarker();
     //this.imageOverlay();
   }
@@ -79,7 +78,10 @@ export class MapPage {
 
 }
 
-/*      Google maps image overlay **IN PROGRESS**
+/*      Google maps image overlay to insert imagige of building layout 
+        over the maps default GMIT building.
+           **IN PROGRESS**
+
 private imageOverlay()
 {
  
@@ -123,7 +125,6 @@ showAlert() {
       title: 'Connection Error',
       subTitle: 'There seems to be problem with internet connection. You need to be connected to use map feature',
       buttons: ['OK']
-
     });
     alert.present();
   }
