@@ -8,7 +8,7 @@ import { AboutPage } from '../about/about';
 var config: neo4j.INeo4jConfig = {
   authentication: {
     username: "neo4j",
-    password: "maximus14"
+    password: "gmitNav"
   },
   protocol: neo4j.NEO4J_PROTOCOL.http,
   host: "localhost",
