@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { AlertController, LoadingController  } from 'ionic-angular';
+import { AboutPage } from '../about/about';
 
 declare var google;
 
@@ -44,10 +45,12 @@ export class MapPage {
    this.geolocation.getCurrentPosition().then((position) => {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
+        console.log(this.lat, this.lng);
         this.initializeMap();    
     }, (err) => {
-      this.showAlert();
-      this.navCtrl.pop();
+      // On error pop up message is displayed and app returns to About page
+      this.showAlert('Connection Error','There seems to be problem with internet connection. You need to be connected to use map feature');
+      this.navCtrl.push(AboutPage);
     });
     
   }
@@ -120,10 +123,10 @@ private draw()
 }
 */
 
-showAlert() {
+showAlert(title, message) {
     let alert = this.alertCtrl.create({
-      title: 'Connection Error',
-      subTitle: 'There seems to be problem with internet connection. You need to be connected to use map feature',
+      title: title,
+      subTitle: message,
       buttons: ['OK']
     });
     alert.present();

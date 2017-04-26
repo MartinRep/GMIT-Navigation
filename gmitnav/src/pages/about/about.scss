@@ -3,7 +3,21 @@ page-about {
         background-image: url('../assets/GMITlogo.jpg');
         background-repeat: no-repeat;
         background-size: contain;
-        background-position-y: 50%;
+        background-position-y: 80%;
         
     }
+    .title{
+        color: red;
+    }
+    .description{
+        color: blue;
+    }
+    .mapDetails{
+        font-weight: bold;
+    }
+    .navDetails{
+        font-size: 120%;
+        font-weight: bold;
+        
+          }
 }

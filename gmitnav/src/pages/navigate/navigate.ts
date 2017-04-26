@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import  * as neo4j from "neo4j-typescript";
 import { AlertController, LoadingController  } from 'ionic-angular';
+import { AboutPage } from '../about/about';
 
 // setting up NEO4j connection settings through specified interface
 var config: neo4j.INeo4jConfig = {
@@ -57,8 +58,8 @@ getRooms()
         }
       );
   }).catch((reason) =>{
-    this.showAlert("Connection Error","Trouble with internet connection.");
-    this.navCtrl.pop();
+    this.showAlert("Connection Error","Can't connect to database.");
+    this.navCtrl.push(AboutPage);
     console.error(reason);
   });
 
@@ -99,7 +100,7 @@ navigate()
   //Check if rooms selected are existent and location and destination room are not the same
   if(this.destRoom == this.locRoom || this.destRooms.indexOf(this.destRoom) == -1 || this.locRooms.indexOf(this.locRoom) == -1 )
   {
-      this.showAlert('Houston we have a problem.','There seems to be Room number MishMash.');
+      this.showAlert('Oooops....','There seems to be Room number MishMash.');
       this.navCtrl.push(NavigatePage);
   }else {
     this.getRoute();
@@ -141,8 +142,8 @@ getRoute()
       );
     })
     .catch((reason) => { 
-      this.showAlert("Connection Error","Trouble with internet connection.");
-      this.navCtrl.pop();     //Returns to previous tab from the tab stack
+      this.showAlert("Connection Error","Can't connect to database.");
+      this.navCtrl.push(AboutPage);     //Returns to previous tab from the tab stack
       console.error(reason);
     });
   }
