@@ -14,7 +14,8 @@ export class MapPage {
 
  @ViewChild('map') mapElement: ElementRef;    //Binding html div element with variable map
  map: any;
- overLay: any;
+ oldBuildingOverLay: any;
+ newBuildingOverLay: any;
  infoWindow: any;
  lat: number;
  lng : number;
@@ -62,23 +63,34 @@ export class MapPage {
       let mapOptions = 
       {
         zoom: minZoomLevel,
-        disableDefaultUI: true,
-        center: new google.maps.LatLng(40.740, -74.18),
-        //center: new google.maps.LatLng(53.278565, -9.010583),
+        disableDefaultUI: false,
+        center: new google.maps.LatLng(53.278565, -9.010583),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
       }
     //Initializing the map
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions); 
-    var imageBounds = {
-          north: 40.773941,
-          south: 40.712216,
-          east: -74.12544,
-          west: -74.22655
+      var oldBuilding = {
+          north: 53.27959,
+          west: -9.01287,
+          south: 53.278038,
+          east: -9.00876
         };
-     this.overLay = new google.maps.GroundOverlay(
-            'https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
-            imageBounds);
-    //this.overLay.setMap(this.map);   
+      var newBuilding = {
+          north: 53.278235,
+          west: -9.01195,
+          south: 53.277276,
+          east: -9.00911
+          
+        };
+     this.oldBuildingOverLay = new google.maps.GroundOverlay(
+            '../assets/Map1.png',
+            oldBuilding);
+    this.oldBuildingOverLay.setMap(this.map);   
+
+    this.newBuildingOverLay = new google.maps.GroundOverlay(
+            '../assets/DMap1.png',
+            newBuilding);
+    this.newBuildingOverLay.setMap(this.map);   
 
     // callin finction to mark users current location on map
     this.createMapMarker();
