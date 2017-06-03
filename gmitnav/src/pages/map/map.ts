@@ -88,7 +88,7 @@ export class MapPage {
     this.oldBuildingOverLay.setMap(this.map);   
 
     this.newBuildingOverLay = new google.maps.GroundOverlay(
-            '../assets/DMap1.png',
+            '../assets/DMap2.png',
             newBuilding);
     this.newBuildingOverLay.setMap(this.map);   
 
