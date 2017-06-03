@@ -14,6 +14,7 @@ export class MapPage {
 
  @ViewChild('map') mapElement: ElementRef;    //Binding html div element with variable map
  map: any;
+ overLay: any;
  infoWindow: any;
  lat: number;
  lng : number;
@@ -62,11 +63,23 @@ export class MapPage {
       {
         zoom: minZoomLevel,
         disableDefaultUI: true,
-        center: new google.maps.LatLng(53.278565, -9.010583),
+        center: new google.maps.LatLng(40.740, -74.18),
+        //center: new google.maps.LatLng(53.278565, -9.010583),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
       }
     //Initializing the map
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions); 
+    var imageBounds = {
+          north: 40.773941,
+          south: 40.712216,
+          east: -74.12544,
+          west: -74.22655
+        };
+     this.overLay = new google.maps.GroundOverlay(
+            'https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
+            imageBounds);
+    //this.overLay.setMap(this.map);   
+
     // callin finction to mark users current location on map
     this.createMapMarker();
     //this.imageOverlay();
