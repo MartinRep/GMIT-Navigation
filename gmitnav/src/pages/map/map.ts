@@ -91,7 +91,6 @@ export class MapPage {
             '../assets/Dmap0.png',
             newBuilding);
     
-    
     this.oldBuildingOverLay.setMap(this.map);   
     this.newBuildingOverLay.setMap(this.map);  
     this.map.addListener('maptypeid_changed', () => {
