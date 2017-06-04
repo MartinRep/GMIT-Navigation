@@ -85,12 +85,27 @@ export class MapPage {
      this.oldBuildingOverLay = new google.maps.GroundOverlay(
             '../assets/Map0.png',
             oldBuilding);
-    this.oldBuildingOverLay.setMap(this.map);   
+    
 
     this.newBuildingOverLay = new google.maps.GroundOverlay(
-            '../assets/DMap0.png',
+            '../assets/Dmap0.png',
             newBuilding);
+    
+    
+    this.oldBuildingOverLay.setMap(this.map);   
     this.newBuildingOverLay.setMap(this.map);  
+    this.map.addListener('maptypeid_changed', () => {
+      console.log(this.map.getMapTypeId());
+      if(this.map.getMapTypeId() != 'roadmap')
+    {
+      this.oldBuildingOverLay.setMap(null);   
+      this.newBuildingOverLay.setMap(null);  
+    }else {
+      this.oldBuildingOverLay.setMap(this.map);   
+      this.newBuildingOverLay.setMap(this.map);  
+    }
+    })
+    
 
     this.oldBuildingOverLay.addListener('click', (e) => {
       console.log('Room location:' + e.latLng.lat() +' ' + e.latLng.lng());
