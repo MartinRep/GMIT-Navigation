@@ -83,25 +83,24 @@ export class MapPage {
           
         };
      this.oldBuildingOverLay = new google.maps.GroundOverlay(
-            '../assets/Map1.png',
+            '../assets/Map0.png',
             oldBuilding);
     this.oldBuildingOverLay.setMap(this.map);   
 
     this.newBuildingOverLay = new google.maps.GroundOverlay(
-            '../assets/DMap2.png',
+            '../assets/DMap0.png',
             newBuilding);
     this.newBuildingOverLay.setMap(this.map);  
 
     this.oldBuildingOverLay.addListener('click', (e) => {
-      console.log('Old Building room Latitude:' + e.latLng.lat() +' & Longtitude: ' + e.latLng.lng() );
+      console.log('Room location:' + e.latLng.lat() +' ' + e.latLng.lng());
     });
     this.newBuildingOverLay.addListener('click', (e) => {
-      console.log('New Building room Latitude:' + e.latLng.lat() +' & Longtitude: ' + e.latLng.lng() );
+      console.log('Room location:' + e.latLng.lat() +' ' + e.latLng.lng());
     });
 
-    // callin finction to mark users current location on map
+    // calling function to mark users current location on map
     this.createMapMarker();
-    //this.imageOverlay();
   }
  
  private createMapMarker() {
@@ -112,48 +111,6 @@ export class MapPage {
     });
 
 }
-
-/*      Google maps image overlay to insert imagige of building layout 
-        over the maps default GMIT building.
-           **IN PROGRESS**
-
-private imageOverlay()
-{
- 
-  this.bounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(53.277622, -9.012568),
-    new google.maps.LatLng(53.279335, -9.009188));
-  this.srcImage = '';
-  this.overlay = new google.maps.OverlayView(this.bounds,this.srcImage,this.map);
-  this.overlay.setMap(this.map);
-  this.div = document.createElement('div');
-  this.div.style.borderStyle = 'none';
-  this.div.style.borderWidth = '0px';
-  this.div.style.position = 'absolute';
-
-  var img:any = document.createElement('img');
-  img.src = this.srcImage;
-  img.style.width = '100%';
-  img.style.height = '100%';
-  img.style.position = 'absolute';
-  this.div.appendChild(img);
-
-  var panes = this.overlay.getPanes();
-  panes.overlayLayer.appendChild(this.div); 
-}
-
-private draw()
-{
-  var overlayProjection = this.overlay.getProjection();
-  var sw = overlayProjection.fromLatLngToDivPixel(this.bounds.getSouthWest());
-  var ne = overlayProjection.fromLatLngToDivPixel(this.bounds.getNorthEast());
-
-  this.div.style.left = sw.x + 'px';
-  this.div.style.top = ne.y + 'px';
-  this.div.style.width = (ne.x - sw.x) + 'px';
-  this.div.style.height = (sw.y - ne.y) + 'px';
-}
-*/
 
 showAlert(title, message) {
     let alert = this.alertCtrl.create({
