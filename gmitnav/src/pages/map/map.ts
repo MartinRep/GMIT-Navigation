@@ -90,7 +90,14 @@ export class MapPage {
     this.newBuildingOverLay = new google.maps.GroundOverlay(
             '../assets/DMap2.png',
             newBuilding);
-    this.newBuildingOverLay.setMap(this.map);   
+    this.newBuildingOverLay.setMap(this.map);  
+
+    this.oldBuildingOverLay.addListener('click', (e) => {
+      console.log('Old Building room Latitude:' + e.latLng.lat() +' & Longtitude: ' + e.latLng.lng() );
+    });
+    this.newBuildingOverLay.addListener('click', (e) => {
+      console.log('New Building room Latitude:' + e.latLng.lat() +' & Longtitude: ' + e.latLng.lng() );
+    });
 
     // callin finction to mark users current location on map
     this.createMapMarker();
