@@ -1,8 +1,8 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController, LoadingController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
-import { AlertController, LoadingController  } from 'ionic-angular';
 import { AboutPage } from '../about/about';
+//import { MdDialog, MdDialogRef } from '@angular/material';
 
 declare var google;
 
@@ -19,28 +19,26 @@ export class MapPage {
  infoWindow: any;
  lat: number;
  lng : number;
- overlay: any;
- div:any;
- bounds: any;
- srcImage: any;
+ loader: any;
   
  constructor(public navCtrl: NavController,  public geolocation: Geolocation, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
+    this.loader = this.loadingCtrl.create({
+      content: "Loading...",
+    });
+    this.loader.present();
   }
 
 //function is called when all the elements in html are initialized to prevent undefined div errors.
  ngAfterViewInit(){
-   this.presentLoading();
+     
+   //this.presentLoading();
    this.getGeoLocation();
  }
  
  //displays loading animation when fetching data from net
- presentLoading() {
-    let loader = this.loadingCtrl.create({
-      content: "Please wait...",
-      duration: 1500
-    });
-    loader.present();
-  }
+ 
+    
+ 
  
  //Getting device current possition
  getGeoLocation(){
@@ -54,7 +52,6 @@ export class MapPage {
       this.showAlert('Connection Error','There seems to be problem with internet connection. You need to be connected to use map feature');
       this.navCtrl.push(AboutPage);
     });
-    
   }
  
  initializeMap() {
@@ -80,40 +77,34 @@ export class MapPage {
           west: -9.01195,
           south: 53.277276,
           east: -9.00911
-          
         };
      this.oldBuildingOverLay = new google.maps.GroundOverlay(
             '../assets/Map0.png',
             oldBuilding);
-    
-
     this.newBuildingOverLay = new google.maps.GroundOverlay(
             '../assets/Dmap0.png',
             newBuilding);
-    
     this.oldBuildingOverLay.setMap(this.map);   
     this.newBuildingOverLay.setMap(this.map);  
     this.map.addListener('maptypeid_changed', () => {
       console.log(this.map.getMapTypeId());
       if(this.map.getMapTypeId() != 'roadmap')
-    {
-      this.oldBuildingOverLay.setMap(null);   
-      this.newBuildingOverLay.setMap(null);  
-    }else {
-      this.oldBuildingOverLay.setMap(this.map);   
-      this.newBuildingOverLay.setMap(this.map);  
-    }
+      {
+        this.oldBuildingOverLay.setMap(null);   
+        this.newBuildingOverLay.setMap(null);  
+      }else {
+        this.oldBuildingOverLay.setMap(this.map);   
+        this.newBuildingOverLay.setMap(this.map);  
+      }
     })
-    
-
     this.oldBuildingOverLay.addListener('click', (e) => {
-      console.log('Room location:' + e.latLng.lat() +' ' + e.latLng.lng());
+      console.log(e.latLng.lat() +' ' + e.latLng.lng());
     });
     this.newBuildingOverLay.addListener('click', (e) => {
-      console.log('Room location:' + e.latLng.lat() +' ' + e.latLng.lng());
+      console.log(e.latLng.lat() +' ' + e.latLng.lng());
     });
-
     // calling function to mark users current location on map
+    this.loader.dismiss();
     this.createMapMarker();
   }
  
@@ -123,7 +114,6 @@ export class MapPage {
       animation: google.maps.Animation.DROP,
       position: new google.maps.LatLng(this.lat,this.lng)
     });
-
 }
 
 showAlert(title, message) {

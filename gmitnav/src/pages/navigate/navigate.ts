@@ -30,9 +30,14 @@ downRooms: string[] = [];
 navigation: boolean = true;
 route: string[] = [];
 navigationRoute: string[] = [];
+loader: any;
 
   constructor(public navCtrl: NavController, public loadingCtrl: LoadingController, public alertCtrl: AlertController) {
-    this.getRooms();
+    this.loader = this.loadingCtrl.create({
+      content: "Loading...",
+    });
+    this.loader.present().then(() => {this.getRooms();});
+    
   }
 
 getRooms()
@@ -57,6 +62,7 @@ getRooms()
           }, this);
         }
       );
+      this.loader.dismiss();
   }).catch((reason) =>{
     this.showAlert("Connection Error","Can't connect to database.");
     this.navCtrl.push(AboutPage);
@@ -110,7 +116,10 @@ navigate()
 getRoute()
 {
   var cyphTest: neo4j.INeo4jCypherRequest;
-  this.presentLoading();
+  let CalcLoader = this.loadingCtrl.create({
+      content: "Calculation route...",
+    });
+  CalcLoader.present();
   this.navigation = false;
   //Connects to Neo4j REST API with predefinned config settings
   neo4j.connect(config)
@@ -137,6 +146,7 @@ getRoute()
               }, this);
             }, this);
           }, this);
+          CalcLoader.dismiss();
           this.showRoute();   // Now calls funtion to process DB data to a readable format
         }
       );
@@ -256,14 +266,7 @@ showRoute()
     }
   }
 }
-//Funcrion to display loading animation in case data beeing fetched from server are delayed. 
-presentLoading() {
-    let loader = this.loadingCtrl.create({
-      content: "Calculation route...",
-      duration: 2000
-    });
-    loader.present();
-  }
+
 // Function to display custom pop up message Errors an such
 showAlert(title:string, message: string) {
     let alert = this.alertCtrl.create({
