@@ -20,6 +20,7 @@ export class MapPage {
  lat: number;
  lng : number;
  loader: any;
+ marker: any;
   
  constructor(public navCtrl: NavController,  public geolocation: Geolocation, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
     this.loader = this.loadingCtrl.create({
@@ -29,27 +30,20 @@ export class MapPage {
   }
 
 //function is called when all the elements in html are initialized to prevent undefined div errors.
- ngAfterViewInit(){
-     
-   //this.presentLoading();
+ ngAfterViewInit(){     
    this.getGeoLocation();
  }
- 
- //displays loading animation when fetching data from net
- 
-    
- 
- 
+
  //Getting device current possition
  getGeoLocation(){
    this.geolocation.getCurrentPosition().then((position) => {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
-        console.log(this.lat, this.lng);
         this.initializeMap();    
     }, (err) => {
       // On error pop up message is displayed and app returns to About page
       this.showAlert('Connection Error','There seems to be problem with internet connection. You need to be connected to use map feature');
+      this.loader.dismiss();
       this.navCtrl.push(AboutPage);
     });
   }
@@ -85,9 +79,12 @@ export class MapPage {
             '../assets/Dmap0.png',
             newBuilding);
     this.oldBuildingOverLay.setMap(this.map);   
-    this.newBuildingOverLay.setMap(this.map);  
+    this.newBuildingOverLay.setMap(this.map);
+    this.marker = new google.maps.Marker({
+      animation: google.maps.Animation.DROP,
+    });
+
     this.map.addListener('maptypeid_changed', () => {
-      console.log(this.map.getMapTypeId());
       if(this.map.getMapTypeId() != 'roadmap')
       {
         this.oldBuildingOverLay.setMap(null);   
@@ -99,9 +96,16 @@ export class MapPage {
     })
     this.oldBuildingOverLay.addListener('click', (e) => {
       console.log(e.latLng.lat() +' ' + e.latLng.lng());
+      this.marker.setMap(null);
+      this.marker.setPosition(new google.maps.LatLng(e.latLng.lat(),e.latLng.lng()));
+      //this.marker.setAnimation(google.maps.Animation.DROP);
+      this.marker.setMap(this.map);
     });
     this.newBuildingOverLay.addListener('click', (e) => {
       console.log(e.latLng.lat() +' ' + e.latLng.lng());
+      this.marker.setPosition(new google.maps.LatLng(e.latLng.lat(),e.latLng.lng()));
+      this.marker.setMap(null);
+      this.marker.setMap(this.map);
     });
     // calling function to mark users current location on map
     this.loader.dismiss();
@@ -109,11 +113,12 @@ export class MapPage {
   }
  
  private createMapMarker() {
-    var marker = new google.maps.Marker({
-      map: this.map,
-      animation: google.maps.Animation.DROP,
+    let locMarker = new google.maps.Marker({
+      animation: google.maps.Animation.BOUNCE,
       position: new google.maps.LatLng(this.lat,this.lng)
     });
+    locMarker.setMap(this.map);
+    
 }
 
 showAlert(title, message) {

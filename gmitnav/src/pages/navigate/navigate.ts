@@ -65,6 +65,7 @@ getRooms()
       this.loader.dismiss();
   }).catch((reason) =>{
     this.showAlert("Connection Error","Can't connect to database.");
+    this.loader.dismiss();
     this.navCtrl.push(AboutPage);
     console.error(reason);
   });
