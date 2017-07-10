@@ -50,6 +50,9 @@ getRooms()
       cyphTest = { statements:[{
           statement: "MATCH (r:Room) RETURN r.name"
         }]}
+        neo4j.cypher(cyphTest).then((resp) => {
+          
+        });
       neo4j.cypher(cyphTest).then((resp) => 
         {
           //Processing DB results

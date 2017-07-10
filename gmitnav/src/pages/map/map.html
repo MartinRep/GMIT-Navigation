@@ -8,6 +8,6 @@
 
 <ion-content>
   <div #map id="map" ></div>
-  <input type="text" name="data" [(ngModel)]="data">
-  <button md-button (click)="dialog.close()">OK</button>
+  <input type="text"  ng-keypress="($event.charCode==13)? onSubmit() : return" [(ngModel)]="roomNumber">
+  <button (click)="onSubmit()">Submit</button>
 </ion-content>

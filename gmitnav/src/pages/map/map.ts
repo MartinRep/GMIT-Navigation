@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController, AlertController, LoadingController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { AboutPage } from '../about/about';
-//import { MdDialog, MdDialogRef } from '@angular/material';
+//import { Storage } from '@ionic/storage';
 
 declare var google;
 
@@ -21,6 +21,7 @@ export class MapPage {
  lng : number;
  loader: any;
  marker: any;
+ roomNumber: any;
   
  constructor(public navCtrl: NavController,  public geolocation: Geolocation, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
     this.loader = this.loadingCtrl.create({
@@ -95,30 +96,37 @@ export class MapPage {
       }
     })
     this.oldBuildingOverLay.addListener('click', (e) => {
-      console.log(e.latLng.lat() +' ' + e.latLng.lng());
-      this.marker.setMap(null);
-      this.marker.setPosition(new google.maps.LatLng(e.latLng.lat(),e.latLng.lng()));
-      //this.marker.setAnimation(google.maps.Animation.DROP);
-      this.marker.setMap(this.map);
+      this.lat = e.latLng.lat();
+      this.lng = e.latLng.lng();
+      this.createMapMarker(this.lat,this.lng);
+
     });
     this.newBuildingOverLay.addListener('click', (e) => {
-      console.log(e.latLng.lat() +' ' + e.latLng.lng());
-      this.marker.setPosition(new google.maps.LatLng(e.latLng.lat(),e.latLng.lng()));
-      this.marker.setMap(null);
-      this.marker.setMap(this.map);
+      this.lat = e.latLng.lat();
+      this.lng = e.latLng.lng();
+      this.createMapMarker(this.lat,this.lng);
     });
     // calling function to mark users current location on map
     this.loader.dismiss();
-    this.createMapMarker();
+
   }
  
- private createMapMarker() {
-    let locMarker = new google.maps.Marker({
-      animation: google.maps.Animation.BOUNCE,
-      position: new google.maps.LatLng(this.lat,this.lng)
+ private createMapMarker(lat: number, lng:number) {
+    this.marker.setMap(null);
+    this.marker = new google.maps.Marker({
+      //animation: google.maps.Animation.BOUNCE,
+      position: new google.maps.LatLng(lat,lng)
     });
-    locMarker.setMap(this.map);
+    this.marker.setMap(this.map);
     
+}
+
+private onSubmit()
+{
+  console.log(this.roomNumber+" "+this.lat+" "+this.lng);
+  //this.storage.set(this.roomNumber, +this.lat+" "+this.lng);
+  this.roomNumber = null;
+  //this.storage.get(this.roomNumber).then((val)=> {console.log("Room: "+this.roomNumber+" latLng: "+val);})
 }
 
 showAlert(title, message) {
