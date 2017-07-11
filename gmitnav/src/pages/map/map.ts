@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController, AlertController, LoadingController } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { AboutPage } from '../about/about';
-//import { Storage } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 
 declare var google;
 
@@ -23,7 +23,7 @@ export class MapPage {
  marker: any;
  roomNumber: any;
   
- constructor(public navCtrl: NavController,  public geolocation: Geolocation, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
+ constructor(public navCtrl: NavController,  public geolocation: Geolocation, public alertCtrl: AlertController, public loadingCtrl: LoadingController, private storage: Storage) {
     this.loader = this.loadingCtrl.create({
       content: "Loading...",
     });
@@ -124,9 +124,20 @@ export class MapPage {
 private onSubmit()
 {
   console.log(this.roomNumber+" "+this.lat+" "+this.lng);
-  //this.storage.set(this.roomNumber, +this.lat+" "+this.lng);
-  this.roomNumber = null;
-  //this.storage.get(this.roomNumber).then((val)=> {console.log("Room: "+this.roomNumber+" latLng: "+val);})
+  this.storage.set('test2','testOk2').then(() =>
+    {
+      this.storage.set(this.roomNumber, " "+this.lat+" "+this.lng).then(
+        ()=>{
+          this.storage.get(this.roomNumber).then((val)=> {
+            console.log("Room: "+this.roomNumber+" latLng: "+val);
+            this.roomNumber = null;
+          })
+          this.storage.get('test').then((value) => {
+            console.log(value);
+          });
+        });
+    });
+
 }
 
 showAlert(title, message) {
