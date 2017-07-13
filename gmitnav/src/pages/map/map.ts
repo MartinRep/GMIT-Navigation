@@ -13,6 +13,7 @@ declare var google;
 export class MapPage {
 
  @ViewChild('map') mapElement: ElementRef;    //Binding html div element with variable map
+ @ViewChild('input') inputElement;
  map: any;
  oldBuildingOverLay: any;
  newBuildingOverLay: any;
@@ -99,12 +100,13 @@ export class MapPage {
       this.lat = e.latLng.lat();
       this.lng = e.latLng.lng();
       this.createMapMarker(this.lat,this.lng);
-
+      this.inputElement.setFocus();
     });
     this.newBuildingOverLay.addListener('click', (e) => {
       this.lat = e.latLng.lat();
       this.lng = e.latLng.lng();
       this.createMapMarker(this.lat,this.lng);
+      this.inputElement.setFocus();
     });
     // calling function to mark users current location on map
     this.loader.dismiss();
@@ -124,7 +126,7 @@ export class MapPage {
 private onSubmit()
 {
   console.log(this.roomNumber+" "+this.lat+" "+this.lng);
-  this.storage.set('test2','testOk2').then(() =>
+  this.storage.set('test31','testOk3131').then(() =>
     {
       this.storage.set(this.roomNumber, " "+this.lat+" "+this.lng).then(
         ()=>{

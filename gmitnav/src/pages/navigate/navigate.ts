@@ -56,8 +56,8 @@ getRooms()
       neo4j.cypher(cyphTest).then((resp) => 
         {
           //Processing DB results
-          resp.results.forEach(function(element) {
-            element.data.forEach(function(room) {
+          resp.results.forEach((element) =>{
+            element.data.forEach((room) =>{
               //Adding rooms numbers to input searchbar lists
               this.locRooms.push(room.row[0]);
               this.destRooms.push(room.row[0]);
@@ -136,10 +136,10 @@ getRoute()
         //Calles to the Neo4j DB with predefined cypher statement and process the responded result nested object arrays
       neo4j.cypher(cyphTest).then((resp) => 
         {
-          resp.results.forEach(function(nResults) {
-            nResults.data.forEach(function(nData) {
-            nData.row.forEach(function(nRow) {
-                nRow.forEach(function(resObjects) {
+          resp.results.forEach((nResults) => {
+            nResults.data.forEach((nData) => {
+            nData.row.forEach((nRow) => {
+                nRow.forEach((resObjects) =>{
                   if(resObjects.name != null)   // if the data is a Nodes with add the name to the route array.
                   {
                     this.route.push(resObjects.name);
