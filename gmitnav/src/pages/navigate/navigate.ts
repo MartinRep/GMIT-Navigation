@@ -1,19 +1,8 @@
+import { Neo4jService } from './../../app/services/neo4j.service';
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import  * as neo4j from "neo4j-typescript";
 import { AlertController, LoadingController  } from 'ionic-angular';
 import { AboutPage } from '../about/about';
-
-// setting up NEO4j connection settings through specified interface
-var config: neo4j.INeo4jConfig = {
-  authentication: {
-    username: "neo4j",
-    password: "maximus14"
-  },
-  protocol: neo4j.NEO4J_PROTOCOL.http,
-  host: "localhost",
-  port: 7474
-};
 
 @Component({
   selector: 'navigate',
@@ -22,6 +11,7 @@ var config: neo4j.INeo4jConfig = {
 
 export class NavigatePage {
 
+rooms : string[] = [];
 locRooms: string[] = [];
 locRoom : string = '';
 destRooms: string[] = [];
@@ -32,7 +22,7 @@ route: string[] = [];
 navigationRoute: string[] = [];
 loader: any;
 
-  constructor(public navCtrl: NavController, public loadingCtrl: LoadingController, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public loadingCtrl: LoadingController, public alertCtrl: AlertController, private neo4jDB: Neo4jService) {
     this.loader = this.loadingCtrl.create({
       content: "Loading...",
     });
@@ -43,42 +33,35 @@ loader: any;
 getRooms()
 {
   //Connects to Neo4j DB and get current list of all rooms in DB
-  neo4j.connect(config).then((response) =>
-  {
-    var cyphTest: neo4j.INeo4jCypherRequest;
-      //Defining cypher statement to retreive rooms list
-      cyphTest = { statements:[{
-          statement: "MATCH (r:Room) RETURN r.name"
-        }]}
-        neo4j.cypher(cyphTest).then((resp) => {
-          
+  this.neo4jDB.cypher("MATCH (r:Room) RETURN r.name").then((resp) =>{
+    //Processing DB results
+    let jsonObj = JSON.stringify(resp);
+    console.log(jsonObj);
+    let rooms: any[] = jsonObj.match("201e");
+    
+    console.log(rooms);
+    resp.results.forEach((element) =>{
+      element.data.forEach((room) =>{
+        this.rooms.push(room.row[0]);
         });
-      neo4j.cypher(cyphTest).then((resp) => 
-        {
-          //Processing DB results
-          resp.results.forEach((element) =>{
-            element.data.forEach((room) =>{
-              //Adding rooms numbers to input searchbar lists
-              this.locRooms.push(room.row[0]);
-              this.destRooms.push(room.row[0]);
-            }, this);
-          }, this);
-        }
-      );
-      this.loader.dismiss();
-  }).catch((reason) =>{
+      });
+    this.loader.dismiss();    
+  }).catch((err) =>{
     this.showAlert("Connection Error","Can't connect to database.");
     this.loader.dismiss();
     this.navCtrl.push(AboutPage);
-    console.error(reason);
+    console.error(err);
   });
-
+ 
 }
 
 getLocation(loc: any) {
-     /* 
-    Reset items back to all of the items!!
-      */
+    // Reset items back to all of the items!!
+    this.locRooms = [];
+    this.rooms.forEach((roomNumber) => {
+      this.locRooms.push(roomNumber);
+    });
+
     // set val to the value of the searchbar
     this.locRoom = loc.target.value;
     // if the value is an empty string don't filter the items
@@ -90,9 +73,11 @@ getLocation(loc: any) {
   }
 
 getDestination(des: any) {
-    /* 
-    Reset items back to all of the items!!
-      */
+    // Reset items back to all of the items!!
+    this.destRooms = [];
+    this.rooms.forEach((roomNumber) => {
+      this.destRooms.push(roomNumber);
+    });
     // set val to the value of the searchbar
     this.destRoom = des.target.value;
     // if the value is an empty string don't filter the items
@@ -119,47 +104,35 @@ navigate()
 
 getRoute()
 {
-  var cyphTest: neo4j.INeo4jCypherRequest;
   let CalcLoader = this.loadingCtrl.create({
       content: "Calculation route...",
     });
   CalcLoader.present();
   this.navigation = false;
-  //Connects to Neo4j REST API with predefinned config settings
-  neo4j.connect(config)
-  .then((response) => 
+  this.neo4jDB.cypher("MATCH p=shortestPath((r1:Room {name:\""+this.locRoom+"\"})-[*0..10]->(r2:Room {name:\""+this.destRoom+"\"})) RETURN p").then((resp) => 
     {
-      console.log("Successfully connected.");
-      cyphTest = { statements:[{
-          statement: "MATCH p=shortestPath((r1:Room {name:\""+this.locRoom+"\"})-[*0..10]->(r2:Room {name:\""+this.destRoom+"\"})) RETURN p"
-        }]}
-        //Calles to the Neo4j DB with predefined cypher statement and process the responded result nested object arrays
-      neo4j.cypher(cyphTest).then((resp) => 
-        {
-          resp.results.forEach((nResults) => {
-            nResults.data.forEach((nData) => {
-            nData.row.forEach((nRow) => {
-                nRow.forEach((resObjects) =>{
-                  if(resObjects.name != null)   // if the data is a Nodes with add the name to the route array.
-                  {
-                    this.route.push(resObjects.name);
-                  }else{                        // or else if the data is relationship (connection)
-                    this.route.push(resObjects.connection[0]);
-                  }
-                }, this);
-              }, this);
+      resp.results.forEach((nResults) => {
+        nResults.data.forEach((nData) => {
+        nData.row.forEach((nRow) => {
+            nRow.forEach((resObjects) =>{
+              if(resObjects.name != null)   // if the data is a Nodes with add the name to the route array.
+              {
+                this.route.push(resObjects.name);
+              }else{                        // or else if the data is relationship (connection)
+                this.route.push(resObjects.connection[0]);
+              }
             }, this);
           }, this);
-          CalcLoader.dismiss();
-          this.showRoute();   // Now calls funtion to process DB data to a readable format
-        }
-      );
-    })
-    .catch((reason) => { 
+        }, this);
+      }, this);
+      CalcLoader.dismiss();
+      this.showRoute();   // Now calls funtion to process DB data to a readable format
+  }).catch((reason) => { 
       this.showAlert("Connection Error","Can't connect to database.");
       this.navCtrl.push(AboutPage);     //Returns to previous tab from the tab stack
       console.error(reason);
     });
+
   }
 
 showRoute()

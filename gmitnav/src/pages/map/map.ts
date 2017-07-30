@@ -75,7 +75,7 @@ export class MapPage {
           east: -9.00911
         };
      this.oldBuildingOverLay = new google.maps.GroundOverlay(
-            '../assets/Map0.png',
+            '../assets/Map0.jpg',
             oldBuilding);
     this.newBuildingOverLay = new google.maps.GroundOverlay(
             '../assets/Dmap0.png',

@@ -1,3 +1,4 @@
+import { Neo4jService } from './services/neo4j.service';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
@@ -40,6 +41,7 @@ import { IonicStorageModule } from '@ionic/storage';
     StatusBar,
     SplashScreen,
     Geolocation,
+    Neo4jService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
