@@ -23,28 +23,22 @@ navigationRoute: string[] = [];
 loader: any;
 
   constructor(public navCtrl: NavController, public loadingCtrl: LoadingController, public alertCtrl: AlertController, private neo4jDB: Neo4jService) {
-    this.loader = this.loadingCtrl.create({
-      content: "Loading...",
-    });
-    this.loader.present().then(() => {this.getRooms();});
-    
   }
+
+ngAfterViewInit(){
+  this.loader = this.loadingCtrl.create({
+    content: "Loading...",
+  });
+  this.loader.present().then(() => {this.getRooms();});
+ }
 
 getRooms()
 {
   //Connects to Neo4j DB and get current list of all rooms in DB
   this.neo4jDB.cypher("MATCH (r:Room) RETURN r.name").then((resp) =>{
     //Processing DB results
-    let jsonObj = JSON.stringify(resp);
-    console.log(jsonObj);
-    let rooms: any[] = jsonObj.match("201e");
-    
-    console.log(rooms);
-    resp.results.forEach((element) =>{
-      element.data.forEach((room) =>{
-        this.rooms.push(room.row[0]);
-        });
-      });
+    let roomsTest = resp.results[0].data;
+    roomsTest.forEach((room) => this.rooms.push(room.row[0]));
     this.loader.dismiss();    
   }).catch((err) =>{
     this.showAlert("Connection Error","Can't connect to database.");
@@ -58,10 +52,7 @@ getRooms()
 getLocation(loc: any) {
     // Reset items back to all of the items!!
     this.locRooms = [];
-    this.rooms.forEach((roomNumber) => {
-      this.locRooms.push(roomNumber);
-    });
-
+    this.rooms.forEach((roomNumber) => this.locRooms.push(roomNumber));
     // set val to the value of the searchbar
     this.locRoom = loc.target.value;
     // if the value is an empty string don't filter the items
@@ -75,9 +66,7 @@ getLocation(loc: any) {
 getDestination(des: any) {
     // Reset items back to all of the items!!
     this.destRooms = [];
-    this.rooms.forEach((roomNumber) => {
-      this.destRooms.push(roomNumber);
-    });
+    this.rooms.forEach((roomNumber) => this.destRooms.push(roomNumber));
     // set val to the value of the searchbar
     this.destRoom = des.target.value;
     // if the value is an empty string don't filter the items
@@ -109,24 +98,22 @@ getRoute()
     });
   CalcLoader.present();
   this.navigation = false;
+  this.route = [];
   this.neo4jDB.cypher("MATCH p=shortestPath((r1:Room {name:\""+this.locRoom+"\"})-[*0..10]->(r2:Room {name:\""+this.destRoom+"\"})) RETURN p").then((resp) => 
     {
-      resp.results.forEach((nResults) => {
-        nResults.data.forEach((nData) => {
-        nData.row.forEach((nRow) => {
-            nRow.forEach((resObjects) =>{
-              if(resObjects.name != null)   // if the data is a Nodes with add the name to the route array.
-              {
-                this.route.push(resObjects.name);
-              }else{                        // or else if the data is relationship (connection)
-                this.route.push(resObjects.connection[0]);
-              }
-            }, this);
-          }, this);
-        }, this);
+      let foundPath = resp.results[0].data[0].row[0];
+      //Resultset from Neo4j comes as object array of nodes and relationships
+      foundPath.forEach((resObject) =>{
+        if(resObject.name != null)   // if the data is a Nodes with add the name to the route array.
+        {
+          this.route.push(resObject.name);
+        }else{                        // or else if the data is relationship (connection)
+          this.route.push(resObject.connection[0]);
+        }
       }, this);
-      CalcLoader.dismiss();
-      this.showRoute();   // Now calls funtion to process DB data to a readable format
+       // Close Loading message and calls funtion to process DB data to a readable format
+      CalcLoader.dismiss().then(() => this.showRoute());
+        
   }).catch((reason) => { 
       this.showAlert("Connection Error","Can't connect to database.");
       this.navCtrl.push(AboutPage);     //Returns to previous tab from the tab stack

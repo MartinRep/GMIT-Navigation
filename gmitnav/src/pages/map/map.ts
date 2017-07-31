@@ -75,7 +75,7 @@ export class MapPage {
           east: -9.00911
         };
      this.oldBuildingOverLay = new google.maps.GroundOverlay(
-            '../assets/Map0.jpg',
+            '../assets/Map0.png',
             oldBuilding);
     this.newBuildingOverLay = new google.maps.GroundOverlay(
             '../assets/Dmap0.png',
@@ -126,20 +126,15 @@ export class MapPage {
 private onSubmit()
 {
   console.log(this.roomNumber+" "+this.lat+" "+this.lng);
-  this.storage.set('test31','testOk3131').then(() =>
-    {
+ 
       this.storage.set(this.roomNumber, " "+this.lat+" "+this.lng).then(
         ()=>{
           this.storage.get(this.roomNumber).then((val)=> {
             console.log("Room: "+this.roomNumber+" latLng: "+val);
             this.roomNumber = null;
           })
-          this.storage.get('test').then((value) => {
-            console.log(value);
-          });
+          this.storage.get('test').then((value) => console.log(value));
         });
-    });
-
 }
 
 showAlert(title, message) {
