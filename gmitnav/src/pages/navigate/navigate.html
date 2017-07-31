@@ -8,16 +8,16 @@
 
 <ion-content>
   <h4 *ngIf="navigation">Select the room you are in:</h4>
-  <ion-searchbar *ngIf="navigation" (ionInput)="getLocation($event)"></ion-searchbar>
+  <ion-searchbar *ngIf="navigation" (ionInput)="getLocation($event.target.value)" [(ngModel)]="this.locRoom"></ion-searchbar>
   <ion-list #locationRoom *ngIf="navigation">
-    <ion-item *ngFor="let room of locRooms">
+    <ion-item *ngFor="let room of locRooms" (click)="getLocation(room)">
       {{ room }}
     </ion-item>
   </ion-list>
   <h4 *ngIf="navigation">Select the destination Room:</h4>
-  <ion-searchbar *ngIf="navigation" (ionInput)="getDestination($event)"></ion-searchbar>
+  <ion-searchbar *ngIf="navigation" (ionInput)="getDestination($event.target.value)" [(ngModel)]="this.destRoom"></ion-searchbar>
   <ion-list #destinationRoom *ngIf="navigation">
-    <ion-item *ngFor="let room of destRooms">
+    <ion-item ion-item *ngFor="let room of destRooms" (click)="getDestination(room)">
       {{ room }}
     </ion-item>
   </ion-list>

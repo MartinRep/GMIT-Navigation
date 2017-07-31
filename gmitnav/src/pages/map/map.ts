@@ -25,15 +25,15 @@ export class MapPage {
  roomNumber: any;
   
  constructor(public navCtrl: NavController,  public geolocation: Geolocation, public alertCtrl: AlertController, public loadingCtrl: LoadingController, private storage: Storage) {
-    this.loader = this.loadingCtrl.create({
-      content: "Loading...",
-    });
-    this.loader.present();
   }
 
 //function is called when all the elements in html are initialized to prevent undefined div errors.
  ngAfterViewInit(){     
-   this.getGeoLocation();
+  this.loader = this.loadingCtrl.create({
+      content: "Loading...",
+    });
+    this.loader.present(); 
+  this.getGeoLocation();
  }
 
  //Getting device current possition
@@ -43,12 +43,11 @@ export class MapPage {
         this.lng = position.coords.longitude;
         this.initializeMap();    
     }, (err) => {
-      // On error pop up message is displayed and app returns to About page
-      this.showAlert('Connection Error','There seems to be problem with internet connection. You need to be connected to use map feature');
-      this.loader.dismiss();
-      this.navCtrl.push(AboutPage);
-    });
-  }
+    // On error pop up message is displayed and app returns to About page
+    this.showAlert('Connection Error','There seems to be problem with internet connection. You need to be connected to use map feature');
+    this.loader.dismiss().then(() => this.navCtrl.push(AboutPage));
+  });
+ }
  
  initializeMap() {
     var minZoomLevel = 17;

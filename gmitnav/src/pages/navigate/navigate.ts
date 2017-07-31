@@ -41,7 +41,7 @@ getRooms()
     roomsTest.forEach((room) => this.rooms.push(room.row[0]));
     this.loader.dismiss();    
   }).catch((err) =>{
-    this.showAlert("Connection Error","Can't connect to database.");
+    this.showAlert("Connection Error","Can't connect to the database.");
     this.loader.dismiss();
     this.navCtrl.push(AboutPage);
     console.error(err);
@@ -49,12 +49,11 @@ getRooms()
  
 }
 
-getLocation(loc: any) {
+getLocation(room : string) {
+    this.locRoom = room;
     // Reset items back to all of the items!!
     this.locRooms = [];
     this.rooms.forEach((roomNumber) => this.locRooms.push(roomNumber));
-    // set val to the value of the searchbar
-    this.locRoom = loc.target.value;
     // if the value is an empty string don't filter the items
     if (this.locRoom && this.locRoom.trim() != '') {
       this.locRooms = this.locRooms.filter((lRoom) => {
@@ -63,12 +62,11 @@ getLocation(loc: any) {
     }
   }
 
-getDestination(des: any) {
+getDestination(room : string) {
+    this.destRoom = room;
     // Reset items back to all of the items!!
     this.destRooms = [];
     this.rooms.forEach((roomNumber) => this.destRooms.push(roomNumber));
-    // set val to the value of the searchbar
-    this.destRoom = des.target.value;
     // if the value is an empty string don't filter the items
     if (this.destRoom && this.destRoom.trim() != '') {
       this.destRooms = this.destRooms.filter((dRoom) => {
